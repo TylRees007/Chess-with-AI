@@ -1,1 +1,1 @@
-from util import Board, Piece, King
+from chess import Board, Piece, King

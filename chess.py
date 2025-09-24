@@ -1,113 +1,576 @@
-"""
-This is a simple chess program that allows you and another person to play chess in the console
+from abc import ABC, abstractmethod
 
-Enter your move in the format (Source)-(Destination) listing the column letter then the row number
-The game will alternate whose turn it is until one of the kings is captured ending the game.
-"""
-import sys
-from util import Board, Piece, King
-import chess_bot
 
-class Game:
+class Board:
     """
-    Class to keep track of the current game being played
+    Class to keep track of what piece is where on a board
     """
     def __init__(self):
-        self.game_board = Board()
-        self.kings = [self.game_board.board[0][4], self.game_board.board[7][4]]
-        self.curr_move = "white"
-
-    def check_detection(self):
         """
-        This method will check to see if either king is in check at the end of the moves
-            - Check from the king for each diagonal and straight until a peice is 
-                reached then see if the move from that piece to the king is valid
-            - Check for each knight
-            - If a Check ever comed back as true for one king mark it and move on 
-                to the next king or the return.
-            - Return a tuple of two booleans representing if a king is in check 
-                or not (black king bool, white king bool)
+        Creates the board that will be used in the game and adds the needed pieces to it.
         """
-        black_check = self.kings[0].is_checked(self.game_board.board)
-        white_check = self.kings[1].is_checked(self.game_board.board)
+        # Creates all Pawns
+        self.board = [[" " for _ in range(8)] for _ in range(8)]
+        for i in range(8):
+            self.board[1][i] = Pawn("black", [1,i])
+            self.board[6][i] = Pawn("white", [6,i])
 
-        if black_check:
-            print("\nBLACK King in check!")
+        for j in range(2):
 
-        if white_check:
-            print("\nWHITE King in check!")
+            # Creates Rooks
+            self.board[0][j * 7] = Rook("black", [0,(j * 7)])
+            self.board[7][j * 7] = Rook("white", [7,(j * 7)])
 
-    def run_game(self):
+            # Creates Knights
+            self.board[0][(1 - j) + (6 * j)] = Knight("black", [0, (1 - j) + (6 * j)])
+            self.board[7][(1 - j) + (6 * j)] = Knight("white", [7, (1 - j) + (6 * j)])
+
+            # Creates Bishops
+            self.board[0][(2 - (2 * j)) + (5 * j)] = Bishop("black", [0, (2 - (2 * j)) + (5 * j)])
+            self.board[7][(2 - (2 * j)) + (5 * j)] = Bishop("white", [7, (2 - (2 * j)) + (5 * j)])
+
+        # Creates Queens
+        self.board[0][3] = Queen("black", (0, 3))
+        self.board[7][3] = Queen("white", (7, 3))
+
+        # Creates Kings
+        self.board[0][4] = King("black", (0, 4))
+        self.board[7][4] = King("white", (7, 4))
+
+    def update_board(self, src, dst):
         """
-        Main driver for the Game class
+        Updates the board based on what piece is moving and to where it is moving to.
         """
-        king_capture = False
-        file = None
-        if len(sys.argv) > 1:
-            file = open(sys.argv[1], 'w', encoding = "utf-8")
-        while True:
-            self.check_detection()
-            print()
-            print(self.game_board)
+        if self.board[src[0]][src[1]] == ' ':
+            raise ValueError
 
-            move = input(f"{self.curr_move.upper()}'s move: ").strip()
-            if file is not None:
-                file.write(f"{move}\n")
-            if move.lower() == "q":
+        move_piece = self.board[src[0]][src[1]].move(self.board, dst)
+        taken_place = self.board[dst[0]][dst[1]]
+        self.board[dst[0]][dst[1]] = move_piece
+        self.board[src[0]][src[1]] = " "
+
+        return taken_place
+
+    def __str__(self):
+        """
+        Will output the current board formatted correctly.
+        """
+        row_num = 8
+        str_ret = ""
+        border = "  ---------------------------------\n"
+        for curr_row in range(8):
+            str_ret += f"{(row_num - curr_row)} |"
+            for piece in self.board[curr_row]:
+                str_ret += f" {piece} |"
+            str_ret += f"\n{border}"
+
+        str_ret += border
+        str_ret += "    A   B   C   D   E   F   G   H\n"
+
+        return str_ret
+
+class Piece(ABC):
+    """
+    Genaric Piece class
+    """
+    def __init__(self, color, curr_pos, piece_type):
+        """
+        Creates a genaric piece.
+        """
+        self.color = color
+        self.curr_pos = curr_pos
+        self.type = piece_type
+
+    @abstractmethod
+    def move(self, curr_board, move):
+        '''
+        This Method will take in the current board state and a potential move to check if it is 
+        valid for the piece that it is trying to move it will then change the curr_pos to the 
+        move and return true or keep the piece in the same place and return false based on the 
+        result of the check.
+        '''
+
+    def knight_check(self, curr_board, move):
+        """
+        Knights moves are invalid unless the piece is a Knight
+        """
+        return False
+
+    def diagonal_check(self,curr_board,  move):
+        '''
+        This method will check to see if a diagonal move is valid
+        '''
+        m_row, m_column = move
+
+        curr_row, curr_column = self.curr_pos
+        row_mod = 1
+        col_mod = 1
+
+        row_change = abs(m_row - curr_row)
+        col_change = abs(m_column - curr_column)
+
+        if curr_row > m_row:
+            row_mod = -1
+
+        if curr_column > m_column:
+            col_mod = -1
+
+        if curr_board[m_row][m_column] != ' ' and curr_board[m_row][m_column].color == self.color:
+            return False
+
+        if row_change != col_change:
+            return False
+
+        for i in range(1,col_change):
+            if curr_board[curr_row + (i * row_mod)][curr_column + (i * col_mod)] != ' ':
+                return False
+
+        return True
+    
+    def __eq__(self, other):
+        if isinstance(other, Piece):
+            other = other.color
+        return self.color == other
+
+    def straight_check(self,curr_board, move):
+        '''
+        This method will check to see if a forward or a sideways move is valid
+        '''
+        m_row, m_column = move
+
+        curr_row, curr_column = self.curr_pos
+        row_mod = 0
+        col_mod = 0
+
+        row_change = abs(m_row - curr_row)
+        col_change = abs(m_column - curr_column)
+
+        if row_change != 0 and col_change != 0:
+            return False
+
+        if curr_board[m_row][m_column] == self:
+            return False
+
+        if curr_row > m_row:
+            row_mod = -1
+        elif curr_row < m_row:
+            row_mod = 1
+
+        if curr_column > m_column:
+            col_mod = -1
+        elif curr_column < m_column:
+            col_mod = 1
+
+        for i in range(1,row_change):
+            if curr_board[curr_row + (i * row_mod)][curr_column + (i * col_mod)] != ' ':
+                return False
+        for i in range(1,col_change):
+            if curr_board[curr_row + (i * row_mod)][curr_column + (i * col_mod)] != ' ':
+                return False
+        return True
+
+    def validate_move(self, curr_board, move):
+        """
+        Returns a bool of whether or not a move is valid for this Piece
+        """
+        ret_bool = self.diagonal_check(curr_board, move) or self.straight_check(curr_board, move) or self.knight_check(curr_board, move)
+        return ret_bool
+
+    def __str__(self):
+        return self.type
+
+class Pawn(Piece):
+    """
+    Class to keep track of the information for the Pawn pieces
+    """
+    def __init__(self, color, curr_pos):
+        """
+        Creates a Pawn and includes all needed information:
+            - first_move: bool for if it this pieces first move
+            - type: a string to represent if it is a black or white pawn
+            - move_direction: either a 1 or -1 to indicate the valid direction of the pawn
+            - name: string to be used when printing what piece this is.
+        """
+        piece_type = 'p' if color == "black" else 'P'
+        super().__init__(color, curr_pos, piece_type)
+        self.first_move = True
+        self.move_direction = 1 if color == "black" else -1
+        self.promote_rank = 7 if color == "black" else 0
+        self.name = f"{color.upper()} Pawn"
+
+    def diagonal_check(self, curr_board, move):
+        """
+        Checks to see if a diagonal move is valid for this pawn. It is only valid when the piece
+        one row up and one column over is a differenct colored piece.
+        """
+        m_row, m_column = move
+        curr_row, curr_column = self.curr_pos
+        col_change = abs(curr_column - m_column)
+        row_change = abs(m_row - curr_row)
+
+        if curr_board[m_row][m_column] == ' ' or curr_board[m_row][m_column] == self:
+            return False
+        if col_change != 1 or row_change != 1:
+            return False
+        if curr_row + (row_change * self.move_direction) != m_row:
+            return False
+
+        return True
+
+    def straight_check(self, curr_board, move):
+        """
+        Checks to see if a straight move is valid for this piece: One or two up to an empty space 
+        is valid on first move one move up is valid on any other move.
+        """
+        m_row, m_column = move
+
+        curr_row, curr_column = self.curr_pos
+
+        row_change = abs(m_row - curr_row)
+        col_change = abs(curr_column - m_column)
+
+        if col_change != 0:
+            return False
+        if curr_row + (row_change * self.move_direction) != m_row:
+            return False
+
+        if row_change <= 2:
+            for i in range(1,row_change + 1):
+                if isinstance(curr_board[curr_row + (self.move_direction * i)][curr_column], Piece) or (i == 2 and not self.first_move):
+                    return False
+        else:
+            return False
+
+
+        return True
+
+    def move(self, curr_board, move):
+        """
+        Move is passed in as a tuple in the order of (row, column)
+                
+        Checks to see if a Diagonal or Straigt move is valid with the move passed in if not 
+        raise ValueError if reaches past all that return current piece if new row is not the 
+        promotion rank, a new queen if it is the promotion rank
+        """
+        m_row, _ = move
+
+        if self.diagonal_check(curr_board, move) or self.straight_check(curr_board, move):
+            self.first_move = False
+            self.curr_pos = move
+
+            if m_row == self.promote_rank:
+                return Queen(self.color, self.curr_pos)
+            return self
+        raise ValueError
+
+class Queen(Piece):
+    """
+    Class to keep track of the information for the Queen pieces
+    """
+    def __init__(self, color, curr_pos):
+        """
+        Creates queen piece with all needed information
+        """
+        piece_type = 'q' if color == "black" else 'Q'
+        super().__init__(color, curr_pos, piece_type)
+        self.name = f"{color.upper()} Queen"
+
+    def move(self, curr_board, move):
+        """
+        Verifies that the move is valid then reassigns the curr_pos to equal the move then
+        returns self. If the move is invalid raise a value error
+        """
+        if self.straight_check(curr_board, move) or self.diagonal_check(curr_board, move):
+            self.curr_pos = move
+            return self
+        raise ValueError
+
+class King(Piece):
+    """
+    Class to keep track of the information for the King pieces
+    """
+    def __init__(self, color, curr_pos):
+        piece_type = 'k' if color == "black" else 'K'
+        super().__init__(color, curr_pos, piece_type)
+        self.name = f"{color.upper()} King"
+
+    def straight_check(self, curr_board, move):
+        """
+        Calls Diagonal check to validate the kings moves
+        """
+        return self.diagonal_check(curr_board, move)
+
+    def diagonal_check(self, curr_board, move):
+        """
+        Validates if a move is good for the King to execute and returns a bool if it is.
+        """
+
+        m_row, m_column = move
+        if curr_board[m_row][m_column] == self:
+            return False
+
+        curr_row, curr_column = self.curr_pos
+
+        row_change = abs(m_row - curr_row)
+        col_change = abs(m_column - curr_column)
+
+        if row_change > 1 or col_change > 1:
+            return False
+
+        return True
+
+    def move(self, curr_board, move):
+        """
+        Verifies that the move is valid then reassigns the curr_pos to equal the move then
+        returns self. If the move is invalid raise a value error
+        """
+        if self.diagonal_check(curr_board, move) or self.straight_check(curr_board, move):
+            self.curr_pos = move
+            return self
+        raise ValueError
+
+    def is_checked(self, curr_board):
+        """
+        Reports whether or not self is in check
+        """
+        curr_row, curr_col = self.curr_pos
+        num_index = 8
+
+        valid_index = (lambda x: x >= 0 and x < 8)
+        knight_moves = [(-1, -2), (-1, 2), (1, -2), (1, 2), (-2, -1), (-2, 1), (2, 1), (2, -1)]
+
+        # Knight Check
+        for row_change, col_change in  knight_moves:
+            check_row = curr_row + row_change
+            check_col = curr_col + col_change
+
+            if valid_index(check_row) and valid_index(check_col):
+                test_piece = curr_board[check_row][check_col]
+                if isinstance(test_piece, Knight) and test_piece.validate_move(curr_board, self.curr_pos):
+                    return True
+
+        row_mod = 1
+        col_mod = 1
+
+        # Back Right Check
+        for i in range(1,num_index):
+            check_row = curr_row + (i * row_mod)
+            check_col = curr_col + (i * col_mod)
+            if valid_index(check_row) and valid_index(check_col):
+                test_piece = curr_board[check_row][check_col]
+                if isinstance(test_piece, Piece):
+                    if test_piece.validate_move(curr_board, self.curr_pos):
+                        return True
+                    break
+            else:
                 break
 
-            try:
-                print(f"{move} ", end = '')
-                source, dest = move.split('-')
-                s_column, s_row = list(source)
-                s_column = ord(s_column.upper()) - 65
-                s_row = 8 - int(s_row)
+        row_mod = -1
+        col_mod = 1
 
-                d_column, d_row = list(dest)
-                d_column = ord(d_column.upper()) - 65
-                d_row =  8 - int(d_row)
+        # Forward Right Check
+        for i in range(1,num_index):
+            check_row = curr_row + (i * row_mod)
+            check_col = curr_col + (i * col_mod)
+            if valid_index(check_row) and valid_index(check_col):
+                test_piece = curr_board[check_row][check_col]
+                if isinstance(test_piece, Piece):
+                    if test_piece.validate_move(curr_board, self.curr_pos):
+                        return True
+                    break
+            else:
+                break
 
-                if s_column < 0 or d_column < 0:
-                    raise ValueError
-                
-                if d_row < 0 or d_column < 0:
-                    raise ValueError
+        # Right Check
+        for i in range(1,num_index):
+            check_col = curr_col + (i * col_mod)
+            if valid_index(check_col):
+                test_piece = curr_board[curr_row][check_col]
+                if isinstance(test_piece, Piece):
+                    if test_piece.validate_move(curr_board, self.curr_pos):
+                        return True
+                    break
+            else:
+                break
 
-                source = (s_row, s_column)
-                dest = (d_row,d_column)
+        # Forward Check
+        for i in range(1,num_index):
+            check_row = curr_row + (i * row_mod)
+            if valid_index(check_row):
+                test_piece = curr_board[check_row][curr_col]
+                if isinstance(test_piece, Piece):
+                    if test_piece.validate_move(curr_board, self.curr_pos):
+                        return True
+                    break
+            else:
+                break
 
-                if self.game_board.board[s_row][s_column] != self.curr_move:
-                    raise ValueError()
+        row_mod = 1
+        col_mod = -1
 
-                sq_tkn = self.game_board.update_board(source,dest)
-                if isinstance(sq_tkn, Piece):
-                    print(f"{self.game_board.board[d_row][d_column].name} captured {sq_tkn.name}")
-                    if isinstance(sq_tkn, King):
-                        king_capture = True
-                        break
+        # Back Left Check
+        for i in range(1,num_index):
+            check_row = curr_row + (i * row_mod)
+            check_col = curr_col + (i * col_mod)
+            if valid_index(check_row) and valid_index(check_col):
+                test_piece = curr_board[check_row][check_col]
+                if isinstance(test_piece, Piece):
+                    if test_piece.validate_move(curr_board, self.curr_pos):
+                        return True
+                    break
+            else:
+                break
 
-            except (IndexError, ValueError):
-                print("INALID MOVE TRY AGAIN")
-                continue
+        # Left Check
+        for i in range(1,num_index):
+            check_col = curr_col + (i * col_mod)
+            if valid_index(check_col):
+                test_piece = curr_board[curr_row][check_col]
+                if isinstance(test_piece, Piece):
+                    if test_piece.validate_move(curr_board, self.curr_pos):
+                        return True
+                    break
+            else:
+                break
 
+        # Back Check
+        for i in range(1,num_index):
+            check_row = curr_row + (i * row_mod)
+            if valid_index(check_row):
+                test_piece = curr_board[check_row][curr_col]
+                if isinstance(test_piece, Piece):
+                    if test_piece.validate_move(curr_board, self.curr_pos):
+                        return True
+                    break
+            else:
+                break
 
-            self.curr_move = "black" if self.curr_move == "white" else "white"
+        row_mod = -1
+        col_mod = -1
 
-        print(f"\n{self.game_board}")
-        if file is not None:
-            file.close()
-        if king_capture:
-            winning_color = 'BLACK' if sq_tkn.color == 'white' else 'WHITE'
+        # Back Left Check
+        for i in range(1,num_index):
+            check_row = curr_row + (i * row_mod)
+            check_col = curr_col + (i * col_mod)
+            if valid_index(check_row) and valid_index(check_col):
+                test_piece = curr_board[check_row][check_col]
+                if isinstance(test_piece, Piece):
+                    if test_piece.validate_move(curr_board, self.curr_pos):
+                        return True
+                    break
+            else:
+                break
 
-            print(f"\nGAME OVER:\n{winning_color} WINS!\n")
+        return False
 
-def main():
+class Knight(Piece):
     """
-    Programs main
+    Class to keep track of the information for the Knight pieces
     """
-    curr_game = Game()
+    def __init__(self, color, curr_pos):
+        """
+        Creates all needed info for the Rook
+        """
+        piece_type = 'n' if color == "black" else 'N'
+        super().__init__(color, curr_pos, piece_type)
+        self.name = f"{color.upper()} Knight"
 
-    curr_game.run_game()
+    def straight_check(self, curr_board, move):
+        """
+        Straight moves are always invalid for the Knight
+        """
+        return False
 
-if __name__ == "__main__":
-    main()
+    def diagonal_check(self, curr_board, move):
+        """
+        Straight moves are always invalid for the Knight
+        """
+        return False
+
+    def knight_check(self, curr_board, move):
+        """
+        Validates if the move is an approved Knight movement and returns a bool of if it is or not
+        """
+        m_row, m_column = move
+
+        if curr_board[m_row][m_column] == self:
+            return False
+
+        curr_row, curr_column = self.curr_pos
+
+        row_change = abs(m_row - curr_row)
+
+        col_change = abs(m_column- curr_column)
+
+        if (row_change == 1 and col_change == 2) or (row_change == 2 and col_change == 1):
+            return True
+
+        return False
+
+    def move(self, curr_board, move):
+        """
+        Verifies that the move is valid then reassigns the curr_pos to equal the move then
+        returns self. If the move is invalid raise a value error
+        """
+
+        if self.knight_check(curr_board, move):
+            self.curr_pos = move
+            return self
+
+        raise ValueError
+
+class Rook(Piece):
+    """
+    Class to keep track of the information for the Rook pieces
+    """
+    def __init__(self, color, curr_pos):
+        """
+        Creates all needed info for the Rook
+        """
+        piece_type = 'r' if color == "black" else 'R'
+        super().__init__(color, curr_pos, piece_type)
+        self.name = f"{color.upper()} Rook"
+
+    def diagonal_check(self, curr_board, move):
+        """
+        Diagonal moves are always invalid for Rooks
+        """
+        return False
+
+    def move(self, curr_board, move):
+        """
+        Verifies that the move is valid then reassigns the curr_pos to equal the move then
+        returns self. If the move is invalid raise a value error
+        """
+        if self.straight_check(curr_board,move):
+            self.curr_pos = move
+            return self
+
+        raise ValueError
+
+class Bishop(Piece):
+    """
+    Class to keep track of the information for the Bishop pieces
+    """
+    def __init__(self, color, curr_pos):
+        piece_type = 'b' if color == "black" else 'B'
+        super().__init__(color, curr_pos, piece_type)
+        #self.type = 'b' if color == "black" else 'B'
+        self.name = f"{color.upper()} Bishop"
+
+    def straight_check(self, curr_board, move):
+        """
+        Straight moves are always invalid for Bishops
+        """
+        return False
+
+    def move(self, curr_board, move):
+        """
+        Verifies that the move is valid then reassigns the curr_pos to equal the move then returns
+        self. If the move is invalid raise a value error
+        """
+
+        if self.diagonal_check(curr_board, move):
+            self.curr_pos = move
+            return self
+        raise ValueError
