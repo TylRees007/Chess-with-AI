@@ -5,7 +5,7 @@ Enter your move in the format (Source)-(Destination) listing the column letter t
 The game will alternate whose turn it is until one of the kings is captured ending the game.
 """
 import sys
-from util import Board, Piece, King
+from chess import Board, Piece, King
 import chess_bot
 
 class Game:
