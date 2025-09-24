@@ -13,9 +13,17 @@ TODO:
 
 - Implement Check Mate
 
-- Implement En Paccont
+- Implement en passant
 
 - Implement Castleing
+
+- Refactor the way to validate moves:
+    
+    - Make it so the game keeps track of what peices are still in play
+
+    - Keep track of points taken (Piece points)
+
+    - 
 
 - Implement the inability to move into a position that will keep/put you in Check
 
