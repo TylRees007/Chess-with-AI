@@ -1,0 +1,48 @@
+HOW TO USE:
+
+To run the program type "python chess.py" into the terminal.
+
+Once the program begins to run you will be prompted for White's move type in "(source)-(destination)" both the source and destination should be formatted with the column letter first followed by the row number. There should be no spaces and it does not matter if the column letter is upper or lower case.
+
+If the move is valid the program will display the updated board and prompt for the opposite color's move. If the move is invalid then the displayed board will be the same as the last one and will prompt for the current color's move again.
+
+This will continue until 'q' is typed into the terminal which will end the current game or when one of the kings is captured. Whoever's king is still standing at the end of the game will be declared the winner.
+
+
+TODO:
+
+- Implement Check Mate
+
+- Implement En Paccont
+
+- Implement Castleing
+
+- Implement the inability to move into a position that will keep/put you in Check
+
+- Bot:
+
+    - Create a bot that can do random moves
+
+    - Improve the bot to take into consideration some tactical movement
+
+    - Implement something so the bot can take into consideration future moves
+
+Bugs found:
+
+- Allows pawns to move backwards to take pieces (Fixed)
+
+- Allows pawns to move forward across an entire file and capture pieces on the same file (Fixed)
+
+- Allows pawns to jump across the board and take a piece one file away meaning white can capture a the king immediatly with the D2 pawn (Fixed)
+
+- Reports that the king is in check when it is not in check (Fixed)
+
+- Returns that a Knight can move across any rank or file even though it should not (Fixed)
+
+- Does not update the king to keep track of the current location meaning it always thinks it is on its starting position and does not allow it to move more than one place away (Fixed)
+
+- Allowed players to take their own pieces (Fixed)
+
+- Queens and rooks can jump over pieces when they are moving horizontally along the board, with no limit to the number of pieces jumped over. (Fixed)
+
+- Black pieces (untested for pawns) can move backwards to a ninth row, and be redirected onto the first row and kill the white pieces. Does not work with a 10th or 11th row. (Fixed)

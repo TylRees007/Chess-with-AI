@@ -1,0 +1,12 @@
+python3 chess.py < test_games/bishop_move_test_game.txt >test_games_output/bishop_move_test_game_output.txt
+python3 chess.py < test_games/check_test_game.txt > test_games_output/check_test_game_output.txt
+python3 chess.py < test_games/four_move_end_game.txt > test_games_output/four_move_end_game_output.txt
+python3 chess.py < test_games/full_test_game.txt > test_games_output/full_test_game_output.txt
+python3 chess.py < test_games/invalid_move_test.txt > test_games_output/invalid_move_test_output.txt
+python3 chess.py < test_games/king_move_test_game.txt > test_games_output/king_move_test_game_output.txt
+python3 chess.py < test_games/knight_move_test_game.txt > test_games_output/knight_move_test_game_output.txt
+python3 chess.py < test_games/pawn_movement_test_game.txt > test_games_output/pawn_movement_test_game_output.txt
+python3 chess.py < test_games/pawn_promotion_test_game.txt > test_games_output/pawn_promotion_test_game_output.txt
+python3 chess.py < test_games/queen_move_test_game.txt > test_games_output/queen_move_test_game_output.txt
+python3 chess.py < test_games/rook_move_test_game.txt > test_games_output/rook_move_test_game_output.txt
+python3 chess.py < test_games/z_test_game.txt > test_games_output/z_test_game_output.txt
