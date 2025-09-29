@@ -17,6 +17,8 @@ TODO:
 
 - Implement Castleing
 
+- Change the way to check color
+
 - Refactor the way to validate moves:
     
     - Make it so the game keeps track of what peices are still in play

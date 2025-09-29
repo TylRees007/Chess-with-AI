@@ -1,4 +1,6 @@
 
+Black Score: 0
+
 8 | r | n | b | q | k | b | n | r |
   ---------------------------------
 7 | p | p | p | p | p | p | p | p |
@@ -18,7 +20,11 @@
   ---------------------------------
     A   B   C   D   E   F   G   H
 
+White Score: 0
+
 WHITE's move: E2-e4 
+Black Score: 0
+
 8 | r | n | b | q | k | b | n | r |
   ---------------------------------
 7 | p | p | p | p | p | p | p | p |
@@ -38,7 +44,11 @@ WHITE's move: E2-e4
   ---------------------------------
     A   B   C   D   E   F   G   H
 
+White Score: 0
+
 BLACK's move: e7-e5 
+Black Score: 0
+
 8 | r | n | b | q | k | b | n | r |
   ---------------------------------
 7 | p | p | p | p |   | p | p | p |
@@ -58,7 +68,11 @@ BLACK's move: e7-e5
   ---------------------------------
     A   B   C   D   E   F   G   H
 
+White Score: 0
+
 WHITE's move: d2-d4 
+Black Score: 0
+
 8 | r | n | b | q | k | b | n | r |
   ---------------------------------
 7 | p | p | p | p |   | p | p | p |
@@ -78,7 +92,11 @@ WHITE's move: d2-d4
   ---------------------------------
     A   B   C   D   E   F   G   H
 
+White Score: 0
+
 BLACK's move: d7-d6 
+Black Score: 0
+
 8 | r | n | b | q | k | b | n | r |
   ---------------------------------
 7 | p | p | p |   |   | p | p | p |
@@ -98,7 +116,11 @@ BLACK's move: d7-d6
   ---------------------------------
     A   B   C   D   E   F   G   H
 
+White Score: 0
+
 WHITE's move: g1-f3 
+Black Score: 0
+
 8 | r | n | b | q | k | b | n | r |
   ---------------------------------
 7 | p | p | p |   |   | p | p | p |
@@ -118,7 +140,11 @@ WHITE's move: g1-f3
   ---------------------------------
     A   B   C   D   E   F   G   H
 
+White Score: 0
+
 BLACK's move: b7-b5 
+Black Score: 0
+
 8 | r | n | b | q | k | b | n | r |
   ---------------------------------
 7 | p |   | p |   |   | p | p | p |
@@ -138,7 +164,11 @@ BLACK's move: b7-b5
   ---------------------------------
     A   B   C   D   E   F   G   H
 
+White Score: 0
+
 WHITE's move: d4-e5 WHITE Pawn captured BLACK Pawn
+
+Black Score: 0
 
 8 | r | n | b | q | k | b | n | r |
   ---------------------------------
@@ -159,7 +189,11 @@ WHITE's move: d4-e5 WHITE Pawn captured BLACK Pawn
   ---------------------------------
     A   B   C   D   E   F   G   H
 
+White Score: 1
+
 BLACK's move: d6-e5 BLACK Pawn captured WHITE Pawn
+
+Black Score: 1
 
 8 | r | n | b | q | k | b | n | r |
   ---------------------------------
@@ -180,9 +214,13 @@ BLACK's move: d6-e5 BLACK Pawn captured WHITE Pawn
   ---------------------------------
     A   B   C   D   E   F   G   H
 
+White Score: 1
+
 WHITE's move: d1-d8 WHITE Queen captured BLACK Queen
 
 BLACK King in check!
+
+Black Score: 1
 
 8 | r | n | b | Q | k | b | n | r |
   ---------------------------------
@@ -203,8 +241,12 @@ BLACK King in check!
   ---------------------------------
     A   B   C   D   E   F   G   H
 
+White Score: 10
+
 BLACK's move: c8-b7 
 BLACK King in check!
+
+Black Score: 1
 
 8 | r | n |   | Q | k | b | n | r |
   ---------------------------------
@@ -224,6 +266,8 @@ BLACK King in check!
   ---------------------------------
   ---------------------------------
     A   B   C   D   E   F   G   H
+
+White Score: 10
 
 WHITE's move: d8-e8 WHITE Queen captured BLACK King
 

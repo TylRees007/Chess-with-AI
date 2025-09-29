@@ -14,6 +14,12 @@ class Game:
     """
     def __init__(self):
         self.game_board = Board()
+        self.active_white_pieces = self.game_board.board[6] + self.game_board.board[7]
+        self.active_black_pieces = self.game_board.board[0] + self.game_board.board[1]
+
+        self.white_score = 0
+        self.black_score = 0
+
         self.kings = [self.game_board.board[0][4], self.game_board.board[7][4]]
         self.curr_move = "white"
 
@@ -47,8 +53,10 @@ class Game:
             file = open(sys.argv[1], 'w', encoding = "utf-8")
         while True:
             self.check_detection()
-            print()
+            print(f"\nBlack Score: {self.black_score}\n")
             print(self.game_board)
+            print(f"White Score: {self.white_score}\n")
+            
 
             move = input(f"{self.curr_move.upper()}'s move: ").strip()
             if file is not None:
@@ -76,11 +84,19 @@ class Game:
                 source = (s_row, s_column)
                 dest = (d_row,d_column)
 
-                if self.game_board.board[s_row][s_column] != self.curr_move:
+                if self.game_board.board[s_row][s_column].color != self.curr_move:
                     raise ValueError()
 
                 sq_tkn = self.game_board.update_board(source,dest)
                 if isinstance(sq_tkn, Piece):
+                    if self.curr_move == "white":
+                        self.active_black_pieces.remove(sq_tkn)
+                        self.white_score += sq_tkn.point
+                    else:
+                        self.active_white_pieces.remove(sq_tkn)
+                        self.black_score += sq_tkn.point
+                    
+
                     print(f"{self.game_board.board[d_row][d_column].name} captured {sq_tkn.name}")
                     if isinstance(sq_tkn, King):
                         king_capture = True

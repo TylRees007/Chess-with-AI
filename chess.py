@@ -80,6 +80,7 @@ class Piece(ABC):
         self.color = color
         self.curr_pos = curr_pos
         self.type = piece_type
+        self.point = -1
 
     @abstractmethod
     def move(self, curr_board, move):
@@ -89,6 +90,15 @@ class Piece(ABC):
         move and return true or keep the piece in the same place and return false based on the 
         result of the check.
         '''
+
+    def color_check(self, other):
+        """
+        Returns a bool of whether or not the other piece is the same color as self
+        """
+        if isinstance(other, Piece):
+            other = other.color
+        return self.color == other
+
 
     def knight_check(self, curr_board, move):
         """
@@ -128,9 +138,9 @@ class Piece(ABC):
         return True
     
     def __eq__(self, other):
-        if isinstance(other, Piece):
-            other = other.color
-        return self.color == other
+        if not isinstance(other, Piece):
+            return False
+        return self.type == other.type and self.color == other.color and self.curr_pos == other.curr_pos
 
     def straight_check(self,curr_board, move):
         '''
@@ -148,7 +158,7 @@ class Piece(ABC):
         if row_change != 0 and col_change != 0:
             return False
 
-        if curr_board[m_row][m_column] == self:
+        if self.color_check(curr_board[m_row][m_column]):
             return False
 
         if curr_row > m_row:
@@ -197,6 +207,7 @@ class Pawn(Piece):
         self.move_direction = 1 if color == "black" else -1
         self.promote_rank = 7 if color == "black" else 0
         self.name = f"{color.upper()} Pawn"
+        self.point = 1
 
     def diagonal_check(self, curr_board, move):
         """
@@ -208,7 +219,7 @@ class Pawn(Piece):
         col_change = abs(curr_column - m_column)
         row_change = abs(m_row - curr_row)
 
-        if curr_board[m_row][m_column] == ' ' or curr_board[m_row][m_column] == self:
+        if curr_board[m_row][m_column] == ' ' or self.color_check(curr_board[m_row][m_column]):
             return False
         if col_change != 1 or row_change != 1:
             return False
@@ -274,6 +285,7 @@ class Queen(Piece):
         piece_type = 'q' if color == "black" else 'Q'
         super().__init__(color, curr_pos, piece_type)
         self.name = f"{color.upper()} Queen"
+        self.point = 9
 
     def move(self, curr_board, move):
         """
@@ -293,6 +305,7 @@ class King(Piece):
         piece_type = 'k' if color == "black" else 'K'
         super().__init__(color, curr_pos, piece_type)
         self.name = f"{color.upper()} King"
+        self.point = 100
 
     def straight_check(self, curr_board, move):
         """
@@ -306,7 +319,7 @@ class King(Piece):
         """
 
         m_row, m_column = move
-        if curr_board[m_row][m_column] == self:
+        if self.color_check(curr_board[m_row][m_column]):
             return False
 
         curr_row, curr_column = self.curr_pos
@@ -474,6 +487,7 @@ class Knight(Piece):
         piece_type = 'n' if color == "black" else 'N'
         super().__init__(color, curr_pos, piece_type)
         self.name = f"{color.upper()} Knight"
+        self.point = 3
 
     def straight_check(self, curr_board, move):
         """
@@ -493,7 +507,7 @@ class Knight(Piece):
         """
         m_row, m_column = move
 
-        if curr_board[m_row][m_column] == self:
+        if self.color_check(curr_board[m_row][m_column]):
             return False
 
         curr_row, curr_column = self.curr_pos
@@ -530,6 +544,7 @@ class Rook(Piece):
         piece_type = 'r' if color == "black" else 'R'
         super().__init__(color, curr_pos, piece_type)
         self.name = f"{color.upper()} Rook"
+        self.point = 5
 
     def diagonal_check(self, curr_board, move):
         """
@@ -557,6 +572,7 @@ class Bishop(Piece):
         super().__init__(color, curr_pos, piece_type)
         #self.type = 'b' if color == "black" else 'B'
         self.name = f"{color.upper()} Bishop"
+        self.point = 3
 
     def straight_check(self, curr_board, move):
         """
