@@ -13,25 +13,31 @@ TODO:
 
 - Implement Check Mate
 
+    - Is king in check:
+        - Are there any moves that can take the king out of check
+
 - Implement en passant
 
-- Implement Castleing
+- Implement Castling
 
-- Change the way to check color
+- Change the way to check color (Done)
 
 - Refactor the way to validate moves:
     
-    - Make it so the game keeps track of what peices are still in play
+    - Make it so the game keeps track of what peices are still in play (Done)
 
-    - Keep track of points taken (Piece points)
+    - Keep track of points taken (Piece points) (Done)
 
-    - 
+    - Keep track of pieces that have actually been taken (Done)
 
-- Implement the inability to move into a position that will keep/put you in Check
+
+- Implement the inability to move into a position that will keep/put you in Check (Done)
 
 - Bot:
 
-    - Create a bot that can do random moves
+    - Create something that will show what moves have been done by the bot
+
+    - Create a bot that can do random moves (Done)
 
     - Improve the bot to take into consideration some tactical movement
 

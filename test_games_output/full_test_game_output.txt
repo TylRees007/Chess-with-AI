@@ -1,5 +1,9 @@
 
+----------------------------------
+
 Black Score: 0
+
+Black Taken: []
 
 8 | r | n | b | q | k | b | n | r |
   ---------------------------------
@@ -22,8 +26,14 @@ Black Score: 0
 
 White Score: 0
 
+White Taken: []
+
 WHITE's move: E2-e4 
+----------------------------------
+
 Black Score: 0
+
+Black Taken: []
 
 8 | r | n | b | q | k | b | n | r |
   ---------------------------------
@@ -46,8 +56,14 @@ Black Score: 0
 
 White Score: 0
 
+White Taken: []
+
 BLACK's move: e7-e5 
+----------------------------------
+
 Black Score: 0
+
+Black Taken: []
 
 8 | r | n | b | q | k | b | n | r |
   ---------------------------------
@@ -70,8 +86,14 @@ Black Score: 0
 
 White Score: 0
 
+White Taken: []
+
 WHITE's move: d2-d4 
+----------------------------------
+
 Black Score: 0
+
+Black Taken: []
 
 8 | r | n | b | q | k | b | n | r |
   ---------------------------------
@@ -94,8 +116,14 @@ Black Score: 0
 
 White Score: 0
 
+White Taken: []
+
 BLACK's move: d7-d6 
+----------------------------------
+
 Black Score: 0
+
+Black Taken: []
 
 8 | r | n | b | q | k | b | n | r |
   ---------------------------------
@@ -118,8 +146,14 @@ Black Score: 0
 
 White Score: 0
 
+White Taken: []
+
 WHITE's move: g1-f3 
+----------------------------------
+
 Black Score: 0
+
+Black Taken: []
 
 8 | r | n | b | q | k | b | n | r |
   ---------------------------------
@@ -142,8 +176,14 @@ Black Score: 0
 
 White Score: 0
 
+White Taken: []
+
 BLACK's move: b7-b5 
+----------------------------------
+
 Black Score: 0
+
+Black Taken: []
 
 8 | r | n | b | q | k | b | n | r |
   ---------------------------------
@@ -166,9 +206,15 @@ Black Score: 0
 
 White Score: 0
 
+White Taken: []
+
 WHITE's move: d4-e5 WHITE Pawn captured BLACK Pawn
 
+----------------------------------
+
 Black Score: 0
+
+Black Taken: []
 
 8 | r | n | b | q | k | b | n | r |
   ---------------------------------
@@ -191,9 +237,15 @@ Black Score: 0
 
 White Score: 1
 
+White Taken: [p]
+
 BLACK's move: d6-e5 BLACK Pawn captured WHITE Pawn
 
+----------------------------------
+
 Black Score: 1
+
+Black Taken: [P]
 
 8 | r | n | b | q | k | b | n | r |
   ---------------------------------
@@ -216,11 +268,17 @@ Black Score: 1
 
 White Score: 1
 
+White Taken: [p]
+
 WHITE's move: d1-d8 WHITE Queen captured BLACK Queen
+
+----------------------------------
 
 BLACK King in check!
 
 Black Score: 1
+
+Black Taken: [P]
 
 8 | r | n | b | Q | k | b | n | r |
   ---------------------------------
@@ -243,14 +301,21 @@ Black Score: 1
 
 White Score: 10
 
-BLACK's move: c8-b7 
+White Taken: [p, q]
+
+BLACK's move: c8-b7 INALID MOVE TRY AGAIN
+
+----------------------------------
+
 BLACK King in check!
 
 Black Score: 1
 
-8 | r | n |   | Q | k | b | n | r |
+Black Taken: [P]
+
+8 | r | n | b | Q | k | b | n | r |
   ---------------------------------
-7 | p | b | p |   |   | p | p | p |
+7 | p |   | p |   |   | p | p | p |
   ---------------------------------
 6 |   |   |   |   |   |   |   |   |
   ---------------------------------
@@ -269,11 +334,21 @@ Black Score: 1
 
 White Score: 10
 
-WHITE's move: d8-e8 WHITE Queen captured BLACK King
+White Taken: [p, q]
 
-8 | r | n |   |   | Q | b | n | r |
+BLACK's move: d8-e8 INALID MOVE TRY AGAIN
+
+----------------------------------
+
+BLACK King in check!
+
+Black Score: 1
+
+Black Taken: [P]
+
+8 | r | n | b | Q | k | b | n | r |
   ---------------------------------
-7 | p | b | p |   |   | p | p | p |
+7 | p |   | p |   |   | p | p | p |
   ---------------------------------
 6 |   |   |   |   |   |   |   |   |
   ---------------------------------
@@ -290,7 +365,27 @@ WHITE's move: d8-e8 WHITE Queen captured BLACK King
   ---------------------------------
     A   B   C   D   E   F   G   H
 
+White Score: 10
 
-GAME OVER:
-WHITE WINS!
+White Taken: [p, q]
+
+BLACK's move: 
+8 | r | n | b | Q | k | b | n | r |
+  ---------------------------------
+7 | p |   | p |   |   | p | p | p |
+  ---------------------------------
+6 |   |   |   |   |   |   |   |   |
+  ---------------------------------
+5 |   | p |   |   | p |   |   |   |
+  ---------------------------------
+4 |   |   |   |   | P |   |   |   |
+  ---------------------------------
+3 |   |   |   |   |   | N |   |   |
+  ---------------------------------
+2 | P | P | P |   |   | P | P | P |
+  ---------------------------------
+1 | R | N | B |   | K | B |   | R |
+  ---------------------------------
+  ---------------------------------
+    A   B   C   D   E   F   G   H
 

@@ -36,12 +36,22 @@ class Board:
         # Creates Kings
         self.board[0][4] = King("black", (0, 4))
         self.board[7][4] = King("white", (7, 4))
+    
+    def check_proteciton(self, piece, move, kings):
+        '''
+        This method check to see if the move is putting own king in check
+        '''
+        test_board = self.__copy__()
+        test_board.board[move[0]][move[1]] = piece
+        test_board.board[piece.curr_pos[0]][piece.curr_pos[1]] = ' '
 
-    def update_board(self, src, dst):
+        return kings[piece.color].is_checked(test_board.board)
+
+    def update_board(self, src, dst, kings):
         """
         Updates the board based on what piece is moving and to where it is moving to.
         """
-        if self.board[src[0]][src[1]] == ' ':
+        if self.board[src[0]][src[1]] == ' ' or self.check_proteciton(self.board[src[0]][src[1]], dst, kings):
             raise ValueError
 
         move_piece = self.board[src[0]][src[1]].move(self.board, dst)
@@ -68,6 +78,11 @@ class Board:
         str_ret += "    A   B   C   D   E   F   G   H\n"
 
         return str_ret
+    
+    def __copy__(self):
+        copy_board = Board()
+        copy_board.board = [row.copy() for row in self.board]
+        return copy_board
 
 class Piece(ABC):
     """
@@ -90,6 +105,7 @@ class Piece(ABC):
         move and return true or keep the piece in the same place and return false based on the 
         result of the check.
         '''
+
 
     def color_check(self, other):
         """
@@ -141,6 +157,18 @@ class Piece(ABC):
         if not isinstance(other, Piece):
             return False
         return self.type == other.type and self.color == other.color and self.curr_pos == other.curr_pos
+    
+    def __gt__(self, other):
+        if not isinstance(other, Piece):
+            return NotImplemented
+        
+        if self.point == other.point:
+            return self.peice > other.piece
+
+        return self.point > other.point
+
+    def __hash__(self):
+        return object.__hash__(self)
 
     def straight_check(self,curr_board, move):
         '''
@@ -188,6 +216,10 @@ class Piece(ABC):
 
     def __str__(self):
         return self.type
+
+    def __repr__(self):
+        return self.type
+    
 
 class Pawn(Piece):
     """
@@ -351,6 +383,7 @@ class King(Piece):
 
         valid_index = (lambda x: x >= 0 and x < 8)
         knight_moves = [(-1, -2), (-1, 2), (1, -2), (1, 2), (-2, -1), (-2, 1), (2, 1), (2, -1)]
+        surrounding_moves = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
 
         # Knight Check
         for row_change, col_change in  knight_moves:
@@ -362,117 +395,20 @@ class King(Piece):
                 if isinstance(test_piece, Knight) and test_piece.validate_move(curr_board, self.curr_pos):
                     return True
 
-        row_mod = 1
-        col_mod = 1
 
-        # Back Right Check
-        for i in range(1,num_index):
-            check_row = curr_row + (i * row_mod)
-            check_col = curr_col + (i * col_mod)
-            if valid_index(check_row) and valid_index(check_col):
-                test_piece = curr_board[check_row][check_col]
-                if isinstance(test_piece, Piece):
-                    if test_piece.validate_move(curr_board, self.curr_pos):
-                        return True
+        # Surrounding move check
+        for row, col in surrounding_moves:
+            for i in range(1,num_index):
+                check_row = curr_row + (i * row)
+                check_col = curr_col + (i * col)
+                if valid_index(check_row) and valid_index(check_col):
+                    test_piece = curr_board[check_row][check_col]
+                    if isinstance(test_piece, Piece):
+                        if test_piece.validate_move(curr_board, self.curr_pos):
+                            return True
+                        break
+                else:
                     break
-            else:
-                break
-
-        row_mod = -1
-        col_mod = 1
-
-        # Forward Right Check
-        for i in range(1,num_index):
-            check_row = curr_row + (i * row_mod)
-            check_col = curr_col + (i * col_mod)
-            if valid_index(check_row) and valid_index(check_col):
-                test_piece = curr_board[check_row][check_col]
-                if isinstance(test_piece, Piece):
-                    if test_piece.validate_move(curr_board, self.curr_pos):
-                        return True
-                    break
-            else:
-                break
-
-        # Right Check
-        for i in range(1,num_index):
-            check_col = curr_col + (i * col_mod)
-            if valid_index(check_col):
-                test_piece = curr_board[curr_row][check_col]
-                if isinstance(test_piece, Piece):
-                    if test_piece.validate_move(curr_board, self.curr_pos):
-                        return True
-                    break
-            else:
-                break
-
-        # Forward Check
-        for i in range(1,num_index):
-            check_row = curr_row + (i * row_mod)
-            if valid_index(check_row):
-                test_piece = curr_board[check_row][curr_col]
-                if isinstance(test_piece, Piece):
-                    if test_piece.validate_move(curr_board, self.curr_pos):
-                        return True
-                    break
-            else:
-                break
-
-        row_mod = 1
-        col_mod = -1
-
-        # Back Left Check
-        for i in range(1,num_index):
-            check_row = curr_row + (i * row_mod)
-            check_col = curr_col + (i * col_mod)
-            if valid_index(check_row) and valid_index(check_col):
-                test_piece = curr_board[check_row][check_col]
-                if isinstance(test_piece, Piece):
-                    if test_piece.validate_move(curr_board, self.curr_pos):
-                        return True
-                    break
-            else:
-                break
-
-        # Left Check
-        for i in range(1,num_index):
-            check_col = curr_col + (i * col_mod)
-            if valid_index(check_col):
-                test_piece = curr_board[curr_row][check_col]
-                if isinstance(test_piece, Piece):
-                    if test_piece.validate_move(curr_board, self.curr_pos):
-                        return True
-                    break
-            else:
-                break
-
-        # Back Check
-        for i in range(1,num_index):
-            check_row = curr_row + (i * row_mod)
-            if valid_index(check_row):
-                test_piece = curr_board[check_row][curr_col]
-                if isinstance(test_piece, Piece):
-                    if test_piece.validate_move(curr_board, self.curr_pos):
-                        return True
-                    break
-            else:
-                break
-
-        row_mod = -1
-        col_mod = -1
-
-        # Back Left Check
-        for i in range(1,num_index):
-            check_row = curr_row + (i * row_mod)
-            check_col = curr_col + (i * col_mod)
-            if valid_index(check_row) and valid_index(check_col):
-                test_piece = curr_board[check_row][check_col]
-                if isinstance(test_piece, Piece):
-                    if test_piece.validate_move(curr_board, self.curr_pos):
-                        return True
-                    break
-            else:
-                break
 
         return False
 
@@ -570,7 +506,6 @@ class Bishop(Piece):
     def __init__(self, color, curr_pos):
         piece_type = 'b' if color == "black" else 'B'
         super().__init__(color, curr_pos, piece_type)
-        #self.type = 'b' if color == "black" else 'B'
         self.name = f"{color.upper()} Bishop"
         self.point = 3
 
